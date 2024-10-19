@@ -1,0 +1,64 @@
+local function createESP(player)
+	local character = player.Character or player.CharacterAdded:Wait()
+	local box = Instance.new("BoxHandleAdornment")
+	box.Name = "ESPBox"
+	box.Adornee = character:WaitForChild("HumanoidRootPart")
+	box.Size = Vector3.new(7, 8, 7) -- Thicker box that covers the whole avatar
+	box.Transparency = 0.7
+	box.Color3 = Color3.fromRGB(255, 0, 0) -- Red box
+	box.AlwaysOnTop = true
+	box.ZIndex = 10
+	box.Parent = game.Workspace
+
+	-- displays peoples name above their head
+	local billboardGui = Instance.new("BillboardGui")
+	billboardGui.Name = "ESPNameTag"
+	billboardGui.Adornee = character:WaitForChild("HumanoidRootPart")
+	billboardGui.Size = UDim2.new(0, 100, 0, 50)
+	billboardGui.StudsOffset = Vector3.new(0, 3, 0) -- Position above the player's head
+	billboardGui.AlwaysOnTop = true
+	billboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Size = UDim2.new(1, 0, 1, 0)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Text = player.Name
+	nameLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Red text
+	nameLabel.TextStrokeTransparency = 0.5 
+	nameLabel.TextScaled = true
+	nameLabel.Parent = billboardGui
+
+	billboardGui.Parent = game.Workspace
+
+	-- Creates a line connecting the box to the name tag idfk if it works
+	local line = Instance.new("LineHandleAdornment")
+	line.Name = "ESPLine"
+	line.Adornee = character:WaitForChild("HumanoidRootPart")
+	line.Length = 3 -- Length of the line
+	line.Thickness = 0.1 -- Thickness of the line
+	line.Transparency = 0.7
+	line.Color3 = Color3.fromRGB(255, 0, 0) -- Red line
+	line.AlwaysOnTop = true
+	line.ZIndex = 10
+	line.Parent = game.Workspace
+
+	-- Adjusts the line's direction and position
+	line.CFrame = CFrame.new(0, 4, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0) -- Position it from the box to the name tag
+end
+
+local function addESPToPlayers()
+	for _, player in pairs(game.Players:GetPlayers()) do
+		if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+			createESP(player)
+		end
+	end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+	player.CharacterAdded:Connect(function(character)
+		wait(1) -- Wait for character to fully load
+		createESP(player)
+	end)
+end)
+
+addESPToPlayers()
